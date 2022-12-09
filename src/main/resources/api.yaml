@@ -5,8 +5,9 @@ info:
   description: Manage CRUD operations on customers and their devices
 paths:
   /customers/{customerId}:
-    put:
-      operationId: updateCustomerAddress
+    get:
+      operationId: getCustomer
+      description: Retrieve customer data, with or without aggregated device data
       parameters:
         - &customerId
           in: path
@@ -14,20 +15,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        description: the new address
-        content:
-          application/json:
-            schema:
-              type: string
-      responses:
-        204:
-          description: address updated
-    get:
-      operationId: getCustomer
-      description: Retrieve customer data, with or without aggregated device data
-      parameters:
-        - *customerId
         - in: query
           name: aggregateDevices
           required: false
@@ -41,9 +28,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customer'
-  /devices/{deviceCode}:
+  /customers/{customerId}/address:
     put:
-      operationId: updateDeviceStatus
+      operationId: updateCustomerAddress
+      parameters:
+        - *customerId
+      requestBody:
+        description: the new address
+        content:
+          application/json:
+            schema:
+              type: string
+      responses:
+        204:
+          description: address updated
+  /devices/{deviceCode}:
+    get:
+      operationId: getDevice
       parameters:
         - &deviceCode
           in: path
@@ -51,6 +52,18 @@ paths:
           schema:
             type: string
           required: true
+      responses:
+        200:
+          description: the retrieved device
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+  /devices/{deviceCode}/status:
+    put:
+      operationId: updateDeviceStatus
+      parameters:
+        - *deviceCode
       requestBody:
         content:
           application/json:
@@ -59,17 +72,6 @@ paths:
       responses:
         204:
           description: status updated
-    get:
-      operationId: getDevice
-      parameters:
-        - *deviceCode
-      responses:
-        200:
-          description: the retrieved device
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Device'
 components:
   schemas:
     Customer:

@@ -57,6 +57,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.9.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -88,6 +94,12 @@
 							<configOptions>
 								<sourceFolder>src/main/java</sourceFolder>
 								<delegatePattern>true</delegatePattern>
+								<useOptional>true</useOptional>
+								<useSpringController>true</useSpringController>
+								<basePackage>it.albx79.telepass.cusdev</basePackage>
+								<apiPackage>it.albx79.telepass.cusdev.api</apiPackage>
+								<modelPackage>it.albx79.telepass.cusdev.model</modelPackage>
+								<configPackage>it.albx79.telepass.cusdev.config</configPackage>
 							</configOptions>
 						</configuration>
 					</execution>
