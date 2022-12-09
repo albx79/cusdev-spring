@@ -10,6 +10,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.UUID;
+
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,9 +45,10 @@ class TelepassCusdevServerApplicationTests {
 
 	@Test
 	void updateDeviceStatus_callsMethodOnDelegate() throws Exception {
-		when(devices.updateDeviceStatus(eq("foo"), anyString()))
+		var deviceId = UUID.randomUUID();
+		when(devices.updateDeviceStatus(eq(deviceId), anyString()))
 						.thenReturn(ResponseEntity.noContent().build());
-		mockMvc.perform(put("/devices/{deviceId}/status", "foo")
+		mockMvc.perform(put("/devices/{deviceId}/status", deviceId)
 				.contentType(APPLICATION_JSON)
 				.content("""
 						"INACTIVE"
