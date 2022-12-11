@@ -13,8 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
 
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -33,12 +32,12 @@ class TelepassCusdevServerApplicationTests {
 
 	@Test
 	void updateCustomerAddress_callsMethodOnDelegate() throws Exception {
-		when(customers.updateCustomerAddress(eq("foo"), anyString()))
+		when(customers.updateCustomerAddress(eq("foo"), any()))
 						.thenReturn(ResponseEntity.noContent().build());
 		mockMvc.perform(put("/customers/{customerId}/address", "foo")
 				.contentType(APPLICATION_JSON)
 				.content("""
-						"via montenapoleone 1, 20120 milano"
+						{ "address": "via montenapoleone 1, 20120 milano" }
 						"""))
 				.andExpect(status().is(SC_NO_CONTENT));
 	}
@@ -46,12 +45,12 @@ class TelepassCusdevServerApplicationTests {
 	@Test
 	void updateDeviceStatus_callsMethodOnDelegate() throws Exception {
 		var deviceId = UUID.randomUUID();
-		when(devices.updateDeviceStatus(eq(deviceId), anyString()))
+		when(devices.updateDeviceStatus(eq(deviceId), any()))
 						.thenReturn(ResponseEntity.noContent().build());
 		mockMvc.perform(put("/devices/{deviceId}/status", deviceId)
 				.contentType(APPLICATION_JSON)
 				.content("""
-						"INACTIVE"
+						{ "status": "INACTIVE" }
 						"""))
 				.andExpect(status().is(SC_NO_CONTENT));
 	}

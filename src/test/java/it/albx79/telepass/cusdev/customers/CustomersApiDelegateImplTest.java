@@ -5,6 +5,7 @@ import com.flextrade.jfixture.annotations.Fixture;
 import it.albx79.telepass.cusdev.devices.DeviceDto;
 import it.albx79.telepass.cusdev.devices.DevicesRepo;
 import it.albx79.telepass.cusdev.model.Device;
+import it.albx79.telepass.cusdev.model.UpdateAddressRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,6 +35,8 @@ class CustomersApiDelegateImplTest {
     List<DeviceDto> someDevices;
     @Fixture
     CustomerDto aCustomer;
+    @Fixture
+    UpdateAddressRequest newAddress;
 
     @BeforeEach
     void setup() {
@@ -62,5 +67,12 @@ class CustomersApiDelegateImplTest {
                 someDevices.stream().map(DeviceDto::getCode).toList(),
                 customer.getDevices().stream().map(Device::getCode).toList()
         );
+    }
+
+    @Test
+    void updateCustomerAddress_saves_customer_with_new_address() {
+        customers.updateCustomerAddress(aCustomer.getId(), newAddress);
+
+        verify(customersRepo).save(argThat(c -> c.getAddress().equals(newAddress.getAddress())));
     }
 }

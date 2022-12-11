@@ -4,6 +4,7 @@ import it.albx79.telepass.cusdev.api.CustomersApiDelegate;
 import it.albx79.telepass.cusdev.devices.DevicesRepo;
 import it.albx79.telepass.cusdev.model.Customer;
 import it.albx79.telepass.cusdev.model.Device;
+import it.albx79.telepass.cusdev.model.UpdateAddressRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,26 @@ public class CustomersApiDelegateImpl implements CustomersApiDelegate {
                 .id(dto.getId())
                 .devices(aggregatedDevices);
         return ResponseEntity.ok(customer);
+    }
 
+    @Override
+    public ResponseEntity<Customer> createCustomer(Customer customer) {
+        var created = customers.save(new CustomerDto(
+                null, customer.getName(), customer.getSurname(), customer.getAddress(), customer.getTaxCode()
+        ));
+        return ResponseEntity.ok(new Customer()
+                .name(created.getName())
+                .surname(created.getSurname())
+                .address(created.getAddress())
+                .taxCode(created.getTaxCode())
+        );
+    }
+
+    @Override
+    public ResponseEntity<Void> updateCustomerAddress(String customerId, UpdateAddressRequest request) {
+        var customer = customers.findById(customerId).get();
+        customer.setAddress(request.getAddress());
+        customers.save(customer);
+        return ResponseEntity.ok(null);
     }
 }
