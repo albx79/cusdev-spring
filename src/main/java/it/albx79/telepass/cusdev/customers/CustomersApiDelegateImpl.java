@@ -19,7 +19,7 @@ public class CustomersApiDelegateImpl implements CustomersApiDelegate {
     private final DevicesRepo devices;
 
     @Override
-    public ResponseEntity<Customer> getCustomer(String customerId, Optional<Boolean> aggregateDevices) {
+    public ResponseEntity<Customer> getCustomer(Integer customerId, Optional<Boolean> aggregateDevices) {
         var dto = customers.findById(customerId).get();
         var aggregatedDevices = aggregateDevices.orElse(false) ?
                 devices.findAllByCustomerId(customerId).stream().map(d -> new Device()
@@ -40,18 +40,19 @@ public class CustomersApiDelegateImpl implements CustomersApiDelegate {
     @Override
     public ResponseEntity<Customer> createCustomer(Customer customer) {
         var created = customers.save(new CustomerDto(
-                null, customer.getName(), customer.getSurname(), customer.getAddress(), customer.getTaxCode()
+                -1, customer.getName(), customer.getSurname(), customer.getAddress(), customer.getTaxCode()
         ));
         return ResponseEntity.ok(new Customer()
                 .name(created.getName())
                 .surname(created.getSurname())
                 .address(created.getAddress())
                 .taxCode(created.getTaxCode())
+                .id(created.getId())
         );
     }
 
     @Override
-    public ResponseEntity<Void> updateCustomerAddress(String customerId, UpdateAddressRequest request) {
+    public ResponseEntity<Void> updateCustomerAddress(Integer customerId, UpdateAddressRequest request) {
         var customer = customers.findById(customerId).get();
         customer.setAddress(request.getAddress());
         customers.save(customer);

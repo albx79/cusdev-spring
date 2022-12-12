@@ -29,7 +29,7 @@ paths:
           name: customerId
           required: true
           schema:
-            type: string
+            type: integer
         - in: query
           name: aggregateDevices
           required: false
@@ -57,7 +57,7 @@ paths:
       responses:
         204:
           description: address updated
-  /devices/:
+  /devices:
     post:
       operationId: createDevice
       requestBody:
@@ -129,7 +129,7 @@ components:
       required: [id, name, surname, taxCode, address]
       properties:
         id:
-          type: string
+          type: integer
           readOnly: true
         name:
           type: string
@@ -155,10 +155,11 @@ components:
         code:
           type: string
           format: uuid
+          readOnly: true
         status:
           $ref: '#/components/schemas/DeviceStatus'
         customer:
-          type: string
+          type: integer
           writeOnly: true
     DeviceStatus:
       type: string

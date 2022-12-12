@@ -18,7 +18,7 @@ import java.util.Objects;
 public class CustomerDto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private int id;
     private String name;
     private String surname;
     private String address;
@@ -31,7 +31,7 @@ public class CustomerDto {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         CustomerDto that = (CustomerDto) o;
-        return id != null && Objects.equals(id, that.id);
+        return id == that.id;
     }
 
     @Override

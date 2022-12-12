@@ -22,7 +22,7 @@ public class DeviceDto {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID code;
     private DeviceStatus status;
-    private String customerId;
+    private int customerId = -1;
 
     protected DeviceDto(){}
 

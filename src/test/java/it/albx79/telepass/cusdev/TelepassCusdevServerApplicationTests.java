@@ -32,9 +32,9 @@ class TelepassCusdevServerApplicationTests {
 
 	@Test
 	void updateCustomerAddress_callsMethodOnDelegate() throws Exception {
-		when(customers.updateCustomerAddress(eq("foo"), any()))
+		when(customers.updateCustomerAddress(eq(123), any()))
 						.thenReturn(ResponseEntity.noContent().build());
-		mockMvc.perform(put("/customers/{customerId}/address", "foo")
+		mockMvc.perform(put("/customers/{customerId}/address", 123)
 				.contentType(APPLICATION_JSON)
 				.content("""
 						{ "address": "via montenapoleone 1, 20120 milano" }

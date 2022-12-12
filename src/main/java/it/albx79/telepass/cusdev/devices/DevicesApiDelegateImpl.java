@@ -5,9 +5,11 @@ import it.albx79.telepass.cusdev.model.Device;
 import it.albx79.telepass.cusdev.model.UpdateStatusRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+@Component
 @RequiredArgsConstructor
 public class DevicesApiDelegateImpl implements DevicesApiDelegate {
     private final DevicesRepo devicesRepo;
@@ -28,7 +30,7 @@ public class DevicesApiDelegateImpl implements DevicesApiDelegate {
 
     @Override
     public ResponseEntity<Device> createDevice(Device device) {
-        var created = devicesRepo.save(new DeviceDto(device.getCode(), device.getStatus(), device.getCustomer()));
+        var created = devicesRepo.save(new DeviceDto(null, device.getStatus(), device.getCustomer()));
         var result = new Device()
                 .code(created.getCode())
                 .status(created.getStatus());

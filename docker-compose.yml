@@ -1,0 +1,21 @@
+services:
+  webapp:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./scripts:/scripts
+    healthcheck:
+      test: /scripts/healthcheck.sh
+  test-runner:
+    image: alpine/httpie
+    depends_on:
+      webapp:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: /scripts/run-usecase.sh
+
+
