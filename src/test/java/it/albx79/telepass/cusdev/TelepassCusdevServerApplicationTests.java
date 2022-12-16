@@ -2,6 +2,8 @@ package it.albx79.telepass.cusdev;
 
 import it.albx79.telepass.cusdev.api.CustomersApiDelegate;
 import it.albx79.telepass.cusdev.api.DevicesApiDelegate;
+import it.albx79.telepass.cusdev.devices.DevicesRepo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,12 +12,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +35,14 @@ class TelepassCusdevServerApplicationTests {
 	private CustomersApiDelegate customers;
 	@MockBean
 	private DevicesApiDelegate devices;
+	private UUID deviceId;
+	@Autowired
+	private DevicesRepo devicesRepo;
+
+	@BeforeEach
+	void setup() {
+		deviceId = UUID.randomUUID();
+	}
 
 	@Test
 	void updateCustomerAddress_callsMethodOnDelegate() throws Exception {
@@ -44,7 +58,6 @@ class TelepassCusdevServerApplicationTests {
 
 	@Test
 	void updateDeviceStatus_callsMethodOnDelegate() throws Exception {
-		var deviceId = UUID.randomUUID();
 		when(devices.updateDeviceStatus(eq(deviceId), any()))
 						.thenReturn(ResponseEntity.noContent().build());
 		mockMvc.perform(put("/devices/{deviceId}/status", deviceId)
@@ -53,5 +66,12 @@ class TelepassCusdevServerApplicationTests {
 						{ "status": "INACTIVE" }
 						"""))
 				.andExpect(status().is(SC_NO_CONTENT));
+	}
+
+	@Test
+	void when_NoSuchElementException_then_status_is_404() throws Exception {
+		when(devices.getDevice(any())).thenThrow(new NoSuchElementException());
+		mockMvc.perform(get("/devices/{deviceId}", deviceId))
+				.andExpect(status().is(SC_NOT_FOUND));
 	}
 }
