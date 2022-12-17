@@ -1,6 +1,7 @@
 package it.albx79.telepass.cusdev.devices;
 
 import it.albx79.telepass.cusdev.api.DevicesApiDelegate;
+import it.albx79.telepass.cusdev.error.PreconditionFailedException;
 import it.albx79.telepass.cusdev.model.Device;
 import it.albx79.telepass.cusdev.model.UpdateStatusRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,10 @@ public class DevicesApiDelegateImpl implements DevicesApiDelegate {
 
     @Override
     public ResponseEntity<Device> createDevice(Device device) {
+        var currentDevices = devicesRepo.findAllByCustomerId(device.getCustomer());
+        if (currentDevices.size() >= 2) {
+            throw new PreconditionFailedException("Maximum number of devices reached");
+        }
         var created = devicesRepo.save(new DeviceDto(null, device.getStatus(), device.getCustomer()));
         var result = new Device()
                 .code(created.getCode())

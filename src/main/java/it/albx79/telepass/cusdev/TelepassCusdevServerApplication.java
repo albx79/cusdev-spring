@@ -1,5 +1,6 @@
 package it.albx79.telepass.cusdev;
 
+import it.albx79.telepass.cusdev.error.PreconditionFailedException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
@@ -27,6 +28,14 @@ public class TelepassCusdevServerApplication {
         public @ResponseBody ErrorResponse
         handleException(NoSuchElementException ex) {
             return ErrorResponse.builder(ex, HttpStatus.NOT_FOUND, firstNonNull(ex.getMessage(), "")).build();
+        }
+
+        @ExceptionHandler(value
+                = PreconditionFailedException.class)
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        public @ResponseBody ErrorResponse
+        handleException(PreconditionFailedException ex) {
+            return ErrorResponse.builder(ex, HttpStatus.PRECONDITION_FAILED, firstNonNull(ex.getMessage(), "")).build();
         }
     }
 }

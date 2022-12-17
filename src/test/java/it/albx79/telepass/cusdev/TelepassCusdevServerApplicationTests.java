@@ -3,6 +3,7 @@ package it.albx79.telepass.cusdev;
 import it.albx79.telepass.cusdev.api.CustomersApiDelegate;
 import it.albx79.telepass.cusdev.api.DevicesApiDelegate;
 import it.albx79.telepass.cusdev.devices.DevicesRepo;
+import it.albx79.telepass.cusdev.error.PreconditionFailedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
-import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -73,5 +73,12 @@ class TelepassCusdevServerApplicationTests {
 		when(devices.getDevice(any())).thenThrow(new NoSuchElementException());
 		mockMvc.perform(get("/devices/{deviceId}", deviceId))
 				.andExpect(status().is(SC_NOT_FOUND));
+	}
+
+	@Test
+	void when_PreconditionFailedException_then_status_is_412() throws Exception {
+		when(devices.getDevice(any())).thenThrow(new PreconditionFailedException("foo"));
+		mockMvc.perform(get("/devices/{deviceId}", deviceId))
+				.andExpect(status().is(SC_PRECONDITION_FAILED));
 	}
 }
