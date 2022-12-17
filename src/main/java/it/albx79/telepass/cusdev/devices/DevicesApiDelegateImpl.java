@@ -2,6 +2,7 @@ package it.albx79.telepass.cusdev.devices;
 
 import it.albx79.telepass.cusdev.api.DevicesApiDelegate;
 import it.albx79.telepass.cusdev.error.PreconditionFailedException;
+import it.albx79.telepass.cusdev.error.ResourceNotFoundException;
 import it.albx79.telepass.cusdev.model.Device;
 import it.albx79.telepass.cusdev.model.UpdateStatusRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ public class DevicesApiDelegateImpl implements DevicesApiDelegate {
 
     @Override
     public ResponseEntity<Void> updateDeviceStatus(UUID deviceCode, UpdateStatusRequest updateStatusRequest) {
-        var device = devicesRepo.findById(deviceCode).get();
+        var device = devicesRepo.findById(deviceCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Device " + deviceCode));
         device.setStatus(updateStatusRequest.getStatus());
         devicesRepo.save(device);
         return ResponseEntity.ok(null);

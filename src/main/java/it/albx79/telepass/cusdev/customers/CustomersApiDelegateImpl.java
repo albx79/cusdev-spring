@@ -2,6 +2,7 @@ package it.albx79.telepass.cusdev.customers;
 
 import it.albx79.telepass.cusdev.api.CustomersApiDelegate;
 import it.albx79.telepass.cusdev.devices.DevicesRepo;
+import it.albx79.telepass.cusdev.error.ResourceNotFoundException;
 import it.albx79.telepass.cusdev.model.Customer;
 import it.albx79.telepass.cusdev.model.Device;
 import it.albx79.telepass.cusdev.model.UpdateAddressRequest;
@@ -20,7 +21,8 @@ public class CustomersApiDelegateImpl implements CustomersApiDelegate {
 
     @Override
     public ResponseEntity<Customer> getCustomer(Integer customerId, Optional<Boolean> aggregateDevices) {
-        var dto = customers.findById(customerId).get();
+        var dto = customers.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer " + customerId));
         var aggregatedDevices = aggregateDevices.orElse(false) ?
                 devices.findAllByCustomerId(customerId).stream().map(d -> new Device()
                         .code(d.getCode())
@@ -53,7 +55,8 @@ public class CustomersApiDelegateImpl implements CustomersApiDelegate {
 
     @Override
     public ResponseEntity<Void> updateCustomerAddress(Integer customerId, UpdateAddressRequest request) {
-        var customer = customers.findById(customerId).get();
+        var customer = customers.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer " + customerId));
         customer.setAddress(request.getAddress());
         customers.save(customer);
         return ResponseEntity.ok(null);

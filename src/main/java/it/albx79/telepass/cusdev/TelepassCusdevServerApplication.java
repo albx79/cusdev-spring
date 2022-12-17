@@ -1,6 +1,7 @@
 package it.albx79.telepass.cusdev;
 
 import it.albx79.telepass.cusdev.error.PreconditionFailedException;
+import it.albx79.telepass.cusdev.error.ResourceNotFoundException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.ErrorResponse;
@@ -23,10 +24,10 @@ public class TelepassCusdevServerApplication {
     public static class GlobalExceptionHandler {
 
         @ExceptionHandler(value
-                = NoSuchElementException.class)
+                = ResourceNotFoundException.class)
         @ResponseStatus(HttpStatus.NOT_FOUND)
         public @ResponseBody ErrorResponse
-        handleException(NoSuchElementException ex) {
+        handleException(ResourceNotFoundException ex) {
             return ErrorResponse.builder(ex, HttpStatus.NOT_FOUND, firstNonNull(ex.getMessage(), "")).build();
         }
 

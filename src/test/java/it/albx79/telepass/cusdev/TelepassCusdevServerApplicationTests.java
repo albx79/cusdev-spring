@@ -4,6 +4,7 @@ import it.albx79.telepass.cusdev.api.CustomersApiDelegate;
 import it.albx79.telepass.cusdev.api.DevicesApiDelegate;
 import it.albx79.telepass.cusdev.devices.DevicesRepo;
 import it.albx79.telepass.cusdev.error.PreconditionFailedException;
+import it.albx79.telepass.cusdev.error.ResourceNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,8 @@ class TelepassCusdevServerApplicationTests {
 	}
 
 	@Test
-	void when_NoSuchElementException_then_status_is_404() throws Exception {
-		when(devices.getDevice(any())).thenThrow(new NoSuchElementException());
+	void when_ResourceNotFoundException_then_status_is_404() throws Exception {
+		when(devices.getDevice(any())).thenThrow(new ResourceNotFoundException("foo"));
 		mockMvc.perform(get("/devices/{deviceId}", deviceId))
 				.andExpect(status().is(SC_NOT_FOUND));
 	}
