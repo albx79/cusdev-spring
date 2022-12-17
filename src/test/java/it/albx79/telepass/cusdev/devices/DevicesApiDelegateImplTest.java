@@ -79,4 +79,11 @@ class DevicesApiDelegateImplTest {
 
         assertThrows(PreconditionFailedException.class, () -> devices.createDevice(device));
     }
+
+    @Test
+    void deleteDevice_deletes_a_device() {
+        devices.deleteDevice(aDevice.getCode());
+
+        verify(devicesRepo).deleteById(aDevice.getCode());
+    }
 }

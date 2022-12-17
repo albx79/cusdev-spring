@@ -43,4 +43,10 @@ public class DevicesApiDelegateImpl implements DevicesApiDelegate {
                 .status(created.getStatus());
         return ResponseEntity.ok(result);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteDevice(UUID deviceCode) {
+        devicesRepo.deleteById(deviceCode);
+        return ResponseEntity.noContent().build();
+    }
 }
